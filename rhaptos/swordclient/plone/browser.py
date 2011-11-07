@@ -38,7 +38,7 @@ class Deposit(formbase.PageForm):
             fn += '.zip'
         fn = zfutil.generateSafeFileName(fn)
         fn = fn.encode('utf-8')
-        zf, zsize = zfutil.exportContent(context, '', fn)
+        zf, zsize = zfutil.exportContentInTempFile(context, '', fn)
         return fn, zsize, zf
         
 
