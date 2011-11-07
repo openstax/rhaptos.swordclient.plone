@@ -1,8 +1,17 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="rhaptos.swordclient.plone">
 
   <five:registerPackage package="." initialize=".initialize" />
+
+  <browser:page
+      for="Products.ATContentTypes.interfaces.IATDocument"
+      name="sworddeposit"
+      class=".browser.Deposit"
+      permission="zope2.View"
+      template="deposit.pt"
+      />
 
 </configure>

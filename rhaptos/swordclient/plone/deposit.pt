@@ -1,0 +1,15 @@
+<html metal:use-macro="here/main_template/macros/master" >
+
+<metal:block metal:fill-slot="top_slot" />
+
+<body style="position: relative">
+<div metal:fill-slot="main">
+
+    <h1>Something</h1>
+
+    <form method="POST" action="">
+    </form>
+
+</div>
+</body>
+</html>
