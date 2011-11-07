@@ -12,6 +12,11 @@ class TestInstallation(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
 
+    def testToolInstalled(self):
+        tool = getToolByName(self.portal, 'sword_repositories_tool')
+        assert tool.id == 'sword_repositories_tool', tool.id
+        assert tool.meta_type == 'Sword Repositories Tool', tool.meta_type
+
 class TestReinstall(unittest.TestCase):
     """Ensure product can be reinstalled safely"""
     layer = INTEGRATION_TESTING

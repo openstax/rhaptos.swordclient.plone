@@ -25,7 +25,7 @@ setup(name='rhaptos.swordclient.plone',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          # -*- Extra requirements: -*-
+          'collective.z3cform.datagridfield',
       ],
       extras_require = {
             'test': [
