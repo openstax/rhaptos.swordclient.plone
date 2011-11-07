@@ -2,6 +2,7 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="rhaptos.swordclient.plone">
 
   <five:registerPackage package="." initialize=".initialize" />
@@ -11,6 +12,14 @@
       name="sworddeposit"
       class=".browser.Deposit"
       permission="zope2.View"
+      />
+
+  <genericsetup:registerProfile
+      name="default"
+      title="Sword client"
+      directory="profiles/default"
+      description="Sword client for Plone site."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
 </configure>
