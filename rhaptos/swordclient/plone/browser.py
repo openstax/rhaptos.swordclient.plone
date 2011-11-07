@@ -5,9 +5,12 @@ from zope.formlib import form
 from five.formlib import formbase
 from xml.dom.minidom import parseString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from zope.component import getUtility
+from collective.zipfiletransport.utilities.interfaces import IZipFileTransportUtility
 from zipfile import ZipFile, ZIP_DEFLATED
 from cStringIO import StringIO
 from urlparse import urlparse
+
 class IDeposit(interface.Interface):
     url = schema.TextLine(title=u'Repository URL',
                           description=u'Repository URL',
@@ -28,39 +31,55 @@ class Deposit(formbase.PageForm):
  
     template = ViewPageTemplateFile('deposit.pt')
 
+    def createZipFile(self, context):
+        zfutil = getUtility(IZipFileTransportUtility, name='zipfiletransport')
+        fn = context.getId()
+        if fn[-4:] != '.zip':
+            fn += '.zip'
+        fn = zfutil.generateSafeFileName(fn)
+        fn = fn.encode('utf-8')
+        zf, zsize = zfutil.exportContent(context, '', fn)
+        return fn, zsize, zf
+        
+
     @form.action("Submit")
     def handle_submit(self, action, data):
 	"""Assemble Sword submission, assumes content in AT Document"""
-        encoding = self.context.getCharset()
-        ptext = self.context.getRawText()
-        dom = parseString("<body>%s</body>" % ptext)
-        remoteImages = []
-        localImages = []
-        for node in dom.getElementsByTagName("img"):
-            src = node.getAttribute("img")
-            src = src.encode('UTF-8')
-            if src.startswith("http://"):
-                remoteImages.append(src)
-            elif src:
-                localImages.append(src)
+        #encoding = self.context.getCharset()
+        #ptext = self.context.getRawText()
+        #dom = parseString("<body>%s</body>" % ptext)
+        #remoteImages = []
+        #localImages = []
+        #for node in dom.getElementsByTagName("img"):
+        #    src = node.getAttribute("img")
+        #    src = src.encode('UTF-8')
+        #    if src.startswith("http://"):
+        #        remoteImages.append(src)
+        #    elif src:
+        #        localImages.append(src)
             
-        ztemp = StringIO()
-        zfile = ZipFile(ztemp, "w", ZIP_DEFLATED)
-        zfile.writestr("index.html", ptext)
-        zfile.close()
-        zsize = ztemp.tell()
-        ztemp.seek(0)
+        #ztemp = StringIO()
+        #zfile = ZipFile(ztemp, "w", ZIP_DEFLATED)
+        #zfile.writestr("index.html", ptext)
+        #zfile.close()
+        #zsize = ztemp.tell()
+        #ztemp.seek(0)
+
+        fn, zsize, ztemp = self.createZipFile(self.context)
+
         auth_string = base64.encodestring("%(username)s:%(password)s" % data)[:-1]
         headers = {
             'Content-Type': 'application/zip',
             'Content-Length': zsize,
-            'Content-Disposition': 'attachment; filename=%s.zip' % self.context.id,
+            'Content-Disposition': 'attachment; filename=%s' % fn,
             'Authorization':"Basic %s" % auth_string 
                     }
         request = urllib2.Request(data['url'], ztemp.read(), headers)
         response = urllib2.urlopen(request)
         # XXX: Wrap response in template
-        return response.read()
+        rtext = response.read()
+        ztemp.close()
+        return rtext
         
         # parts = urlparse(self.request.form['url'])
         # host = parts.netloc.split(':')[0]
