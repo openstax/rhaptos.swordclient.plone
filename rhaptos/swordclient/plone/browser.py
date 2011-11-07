@@ -10,8 +10,8 @@ from cStringIO import StringIO
 from urlparse import urlparse
 class IDeposit(interface.Interface):
     url = schema.TextLine(title=u'Repository URL',
-                           description=u'Repository URL',
-                           required=True)
+                          description=u'Repository URL',
+                          required=True)
 
     username = schema.TextLine(title=u'Username',
                            description=u'Username',
@@ -47,7 +47,9 @@ class Deposit(formbase.PageForm):
         ztemp = StringIO()
         zfile = ZipFile(ztemp, "w", ZIP_DEFLATED)
         zfile.writestr("index.html", ptext)
+        zfile.close()
         zsize = ztemp.tell()
+        ztemp.seek(0)
         auth_string = base64.encodestring("%(username)s:%(password)s" % data)[:-1]
         headers = {
             'Content-Type': 'application/zip',
