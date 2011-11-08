@@ -1,0 +1,3 @@
+<registry>
+  <records interface="rhaptos.swordclient.plone.sword_repositories_tool.ISwordRepositoriesSettings" />
+</registry>
