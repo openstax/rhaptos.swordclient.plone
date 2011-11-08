@@ -10,6 +10,8 @@ class TestCase(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
+        import collective.z3cform.datagridfield
+        self.loadZCML(package=collective.z3cform.datagridfield)
         import rhaptos.swordclient.plone
         self.loadZCML(package=rhaptos.swordclient.plone)
         z2.installProduct(app, PROJECTNAME)
